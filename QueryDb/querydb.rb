@@ -1,6 +1,7 @@
 require 'sqlite3'
 require 'ap'
-DBNAME = "P:/Dropbox/progetti/20141006 - Analisi_Prezzi/Ruby/prezzi.sqlite"
+# TODO: Inserire il path dinamico per il DB dei prezzi
+DBNAME = "P:/Dropbox/progetti/20141006 - Analisi_Prezzi/Ruby/DB/prezzi.sqlite"
 
 class Db
    attr_accessor :db

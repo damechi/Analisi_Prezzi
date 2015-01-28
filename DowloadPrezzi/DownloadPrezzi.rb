@@ -62,7 +62,7 @@ class Download_Ipex
    def check_presenza_prezzi
       db = Db.new
       db.connect("Log")
-      result = (db.get_value(@flusso.tipo_flusso, (DATA+1).strftime("%Y-%m-%d")))
+      result = (db.get_value(@flusso.tipo_flusso, (DATA).strftime("%Y-%m-%d")))
       if result.empty?
          return 0
       else

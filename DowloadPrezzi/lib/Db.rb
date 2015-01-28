@@ -19,7 +19,8 @@ ABBR_GIORNINAMES = %w(Dom Lun Mar Mer Gio Ven Sab)
 
 QUARTER = [1, 2, 3, 4]
 
-DBNAME = "P:/Dropbox/progetti/20141006 - Analisi_Prezzi/Ruby/prezzi.sqlite"
+# TODO: Inserire il path dinamico per il DB dei prezzi
+DBNAME = "P:/Dropbox/progetti/20141006 - Analisi_Prezzi/Ruby/DB/prezzi.sqlite"
 
 class Db
    attr_accessor :db
@@ -50,7 +51,7 @@ class Db
       (flusso.value).each do |x,y|
          zona   = x
          prezzi = y 
-         @db.execute "INSERT OR REPLACE INTO Prezzi (Data, Giorno , Flusso, Zona, #{((1..24).map{|x| "Ora"+x.to_s}).join(",")}) VALUES('#{data}', #{giorno}, '#{tipo_flusso}', '#{zona}', #{prezzi.join(",")})"
+         @db.execute "INSERT OR REPLACE INTO Prezzi (Data, Giorno , Flusso, Zona, #{((1..24).map{|x| "Ora"+x.to_s}).join(",")}) VALUES('#{data}', #{giorno}, '#{tipo_flusso.sub("_Prezzi","")}', '#{zona}', #{prezzi.join(",")})"
       end
 
 
