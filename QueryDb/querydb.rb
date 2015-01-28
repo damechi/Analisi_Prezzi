@@ -20,68 +20,104 @@ class Db
       end
    end
 
-
-
-
    def get_value(flusso, data)
-    
+
       @db.execute("SELECT * FROM Log WHERE Flusso LIKE '#{flusso}' AND Data LIKE '#{data}'")
-     
+
    end
 
    def exec_query(query)
-        ap @db.execute(query)
+      @db.execute(query)
    end
 
 end
-
-
 
 
 class Query
    attr_accessor :start_date, :end_date, :giorno, :mercato1, :mercato2, :zona, :query
    def initialize
-      @start_date = "2015-01-27"
-      @end_date   = "2015-01_28"
-      @giorno     = [1,2,3]
+      @start_date = "2015-01-27" 
+      @end_date   = nil 
+      @giorno     = nil
       @mercato1   = "MGP"
-      @mercato2   = "MI1"
-      @zona       = ["NORD", "CSUD"]
-      @query      = "SELECT * FROM Prezzi "
+      @mercato2   = nil
+      @zona       = ["SUD"] 
+      @query      = "SELECT * FROM Prezzi WHERE"
    end
 
    def genera_query
-      @query = @query + parse_date + parse_giorno
+      query_date     = parse_date
+      query_giorno   = parse_giorno
+      query_mercato  = parse_mercato 
+      query_zona     = parse_zona
+
+      @query = @query + " AND " + "("+query_date+")"  if query_date != nil  
+
+      @query = @query + " AND " + "("+query_giorno+")" if query_giorno != nil
+
+      @query = @query + " AND " + "("+query_mercato+")" if query_mercato != nil
+
+      @query = @query + " AND " + "("+query_zona+")" if query_zona != nil
+
+      return @query.sub("AND", "")
+
    end
 
    def parse_date
       if (@start_date != nil) && (@end_date != nil)
-         return "WHERE Data BETWEEN '#{@start_date}' AND '#{@end_date}' "
+         return "Data BETWEEN '#{@start_date}' AND '#{@end_date}'"
       elsif @start_date != nil
-         return "WHERE Data = '#{@start_date}' "
+         return " Data = '#{@start_date}'"
+      elsif @end_date != nil
+         return "Data = '#{@end_date}'"
       else
-         return "WHERE Data = '#{@end_date}' "
+         return nil
       end
-      return nil
+
    end
 
    def parse_giorno
       g = "" 
-      if @giorno.empty? 
-         return "" 
+      if @giorno.nil?
+         return nil 
       else
          @giorno.each do |x|
-            g = g+" OR Giorno = #{x} "
-
+            g = g+"OR Giorno = #{x} "
          end
       end
-      return g
+      return g.sub("OR", "")
    end
+
+   def parse_mercato
+      m = "" 
+      if (@mercato1 != nil) && (@mercato2 != nil)
+         return "Flusso = '#{@mercato1}' OR Flusso ='#{@mercato2}'"
+      elsif @mercato1 != nil
+         return "Flusso = '#{@mercato1}'"
+      elsif @mercato2 != nil
+         return "Flusso = '#{@mercato2}'"
+      else
+         return nil
+      end
+
+   end
+
+   def parse_zona
+      z = "" 
+      if @zona.nil?
+         return nil
+      else
+         @zona.each do |x|
+            z = z+"OR Zona = '#{x}' "
+         end
+      end
+      return z.sub("OR", "")
+   end
+
+
 end
 
 query = Query.new
-p query.genera_query
-
 db = Db.new
 db.connect
-db.exec_query(query.query)
+ap db.exec_query(query.genera_query)
