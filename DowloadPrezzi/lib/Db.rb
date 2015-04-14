@@ -20,7 +20,10 @@ ABBR_GIORNINAMES = %w(Dom Lun Mar Mer Gio Ven Sab)
 QUARTER = [1, 2, 3, 4]
 
 # TODO: Inserire il path dinamico per il DB dei prezzi
-DBNAME = "P:/Dropbox/progetti/20141006 - Analisi_Prezzi/Ruby/DB/prezzi.sqlite"
+#DBNAME = "P:/Dropbox/progetti/20141006 - Analisi_Prezzi/Ruby/DB/prezzi.sqlite"
+
+DBNAME = (Pathname.new(__dir__).parent.parent+"DB/prezzi.sqlite").to_s
+
 
 class Db
    attr_accessor :db
@@ -32,7 +35,7 @@ class Db
       begin
          @db = SQLite3::Database.open DBNAME
          if table == "Prezzi"
-            @db.execute "CREATE TABLE IF NOT EXISTS #{table}(Id INTEGER PRIMARY KEY AUTOINCREMENT, Data DATE, Giorno INTEGER, Flusso TEXT, Zona TEXT, #{((1..24).map{|x| "Ora"+x.to_s+" REAL"}).join(",")} , UNIQUE(Data, Flusso, Zona))"
+            @db.execute "CREATE TABLE IF NOT EXISTS #{table}(Id INTEGER PRIMARY KEY AUTOINCREMENT, Data DATE, Giorno TEXT, Flusso TEXT, Zona TEXT, #{((1..24).map{|x| "Ora"+x.to_s+" REAL"}).join(",")} , UNIQUE(Data, Flusso, Zona))"
          else
             @db.execute "CREATE TABLE IF NOT EXISTS Log(Id INTEGER PRIMARY KEY AUTOINCREMENT, Data DATE, Flusso TEXT, Stato INTEGER, Messaggio TEXT, UNIQUE(Data, Flusso))"
          end
@@ -46,12 +49,12 @@ class Db
 
    def scrivi_dati_in_db(flusso)
       data        =  flusso.data.strftime("%Y-%m-%d")
-      giorno      =  flusso.data.wday
+      giorno      =  get_giorno(flusso.data.wday)
       tipo_flusso =  flusso.tipo_flusso
       (flusso.value).each do |x,y|
          zona   = x
          prezzi = y 
-         @db.execute "INSERT OR REPLACE INTO Prezzi (Data, Giorno , Flusso, Zona, #{((1..24).map{|x| "Ora"+x.to_s}).join(",")}) VALUES('#{data}', #{giorno}, '#{tipo_flusso.sub("_Prezzi","")}', '#{zona}', #{prezzi.join(",")})"
+         @db.execute "INSERT OR REPLACE INTO Prezzi (Data, Giorno , Flusso, Zona, #{((1..24).map{|x| "Ora"+x.to_s}).join(",")}) VALUES('#{data}', '#{giorno}', '#{tipo_flusso.sub("_Prezzi","")}', '#{zona}', #{prezzi.join(",")})"
       end
 
 
@@ -72,22 +75,31 @@ class Db
    #    end
    # end
    #
-   def scrivi_log_in_db(stato, flusso, messaggio)
+   def scrivi_log_in_db(stato, flusso, messaggio, data)
       #@db.execute "INSERT OR REPLACE INTO Log(Data, Flusso, Stato , Messaggio) VALUES ('#{DATA.strftime("%Y-%m-%d")}', '#{flusso}', '#{stato}', '#{messaggio}')"
       #@db.execute "INSERT OR REPLACE INTO Log(Data, Flusso, Stato , Messaggio) VALUES ('#{DATA.strftime("%Y-%m-%d")}', '#{flusso}', '#{stato}', '#{messaggio}')"
-      @db.execute( "INSERT OR REPLACE INTO Log (Data, Flusso, Stato , Messaggio) VALUES ( ?, ? , ? , ? )", [DATA.strftime("%Y-%m-%d"), flusso, stato, messaggio])
+      @db.execute( "INSERT OR REPLACE INTO Log (Data, Flusso, Stato , Messaggio) VALUES ( ?, ? , ? , ? )", [data.strftime("%Y-%m-%d"), flusso, stato, messaggio])
    end
 
-
-
    def get_value(flusso, data)
-    
       @db.execute("SELECT * FROM Log WHERE Flusso LIKE '#{flusso}' AND Data LIKE '#{data}'")
-     
    end
 
    def get_all_value
-        p @db.execute("SELECT * FROM Log")
+      p @db.execute("SELECT * FROM Log")
+   end
+
+   def get_giorno(day)
+      case day
+      when 0 then "Domenica"
+      when 1 then "Lunedì"
+      when 2 then "Martedì"
+      when 3 then "Mercelodì"
+      when 4 then "Giovedì"
+      when 5 then "Venerdì"
+      when 6 then "Sabato"
+      end
+
    end
 
 end

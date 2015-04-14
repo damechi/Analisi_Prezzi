@@ -18,11 +18,13 @@ class Xml
          x.nodes.each{|y|
             if  (y.value != "Data") && (y.value != "Ora" ) && (y.value != "Mercato")
                if @prezzi["#{y.value}"] == nil
-                  case file
-                  when ->(n) { n.fnmatch?("*MI3*")} then  @prezzi["#{y.value}"] = Array.new(12, "null")
-                  when ->(n) { n.fnmatch?("*MI4*")} then  @prezzi["#{y.value}"] = Array.new(16, "null")
-                  else  @prezzi["#{y.value}"] = [] 
-                  end
+                  #case file
+                  #when ->(n) { n.fnmatch?("*MI3*")} then  @prezzi["#{y.value}"] = Array.new(16, "null")
+                  #when ->(n) { n.fnmatch?("*MI4*")} then  @prezzi["#{y.value}"] = Array.new(12, "null")
+                  #when ->(n) { n.fnmatch?("*MI5*")} then  @prezzi["#{y.value}"] = Array.new(12, "null")
+                  #@else  @prezzi["#{y.value}"] = [] 
+                  @prezzi["#{y.value}"] = [] 
+                  #end
                end
                @prezzi["#{y.value}"] << ((y.nodes[0].sub(",",".")).to_f).round(2)
             end
@@ -31,6 +33,12 @@ class Xml
       @prezzi.delete_if do |k,v|
          ["BSP","SVIZ","SLOV","ROSN","PRGP","MFTV","GREC","FRAN","FOGN","CORS","COAC","AUST","NAT"].include? k
       end
+      @prezzi.each { |k,v|
+          if @prezzi[k].length != 24
+             @prezzi[k] = Array.new(24-@prezzi[k].length,"null")+@prezzi[k]
+
+          end
+      }
       return @prezzi
    end
 end
