@@ -2,6 +2,7 @@ require "Date"
 require File.dirname(__FILE__) + '/Ftp'
 require File.dirname(__FILE__) + '/Db'
 require File.dirname(__FILE__) + '/Xml'
+require File.dirname(__FILE__) + '/email'
 
 #DATA = Date.today-1
 
@@ -55,9 +56,9 @@ class Download_Ipex
       db.connect("Log")
       result = (db.get_value(@flusso.tipo_flusso, (@data).strftime("%Y-%m-%d")))
       if result.empty?
-         return 0
+         return 2
       else
-         return (db.get_value(@flusso.tipo_flusso, @data.strftime("%Y-%m-%d")))[0]
+         return (db.get_value(@flusso.tipo_flusso, @data.strftime("%Y-%m-%d")))[0][3]
       end
    end
 
@@ -68,6 +69,15 @@ class Download_Ipex
    end
 end
 
+
+def invia_email(data, flusso, errore)
+   # Set up template data.
+   email = Email.new(data, flusso, errore)
+   email.crea_template
+   #puts email.rhtml.result(email.get_binding)
+   email.invia
+end
+
 def avvio(options)
    flusso               = options[:flusso]
    startdate            = options[:startdate]
@@ -76,16 +86,26 @@ def avvio(options)
    (startdate .. enddate).map{|data|
       begin
          ipex =  Download_Ipex.new(flusso, data)
-         if ipex.check_presenza_prezzi[3] == 0
+         
+         presenza_prezzi = ipex.check_presenza_prezzi
+         if presenza_prezzi == 1
+            puts "Flusso #{flusso} per #{data.strftime("%d/%m/%Y")} gia presente"
+         else
             ipex.download_file
             ipex.parse_xml
             ipex.inserimento_dati_db
             ipex.inserisci_log_in_db(1, "OK" )
-         else
-            puts "Flusso #{flusso} per #{data.strftime("%d/%m/%Y")} gia presente"
          end
       rescue Exception => e
-         ipex.inserisci_log_in_db(0, e.to_s )#e.backtrace.inspect
+         if presenza_prezzi == 7
+            invia_email(data , flusso, e.to_s)
+            ipex.inserisci_log_in_db(0, e.to_s )#e.backtrace.inspect
+         elsif presenza_prezzi == 0
+            ipex.inserisci_log_in_db(0, e.to_s )#e.backtrace.inspect
+         else
+            presenza_prezzi += 1
+            ipex.inserisci_log_in_db(presenza_prezzi, e.to_s )#e.backtrace.inspect
+         end
       end
    }
 
