@@ -8,6 +8,7 @@
 =end
 
 require 'gtk2'
+require 'win32ole'
 
 cal = Gtk::Calendar.new
 
@@ -16,7 +17,7 @@ w.set_window_position Gtk::Window::POS_CENTER
 w.add(cal).show_all.signal_connect('delete_event') do
   Gtk.main_quit
 end
-
+prova = 
 date = Time.new
 
 cal.select_month(date.month, date.year)
@@ -25,38 +26,33 @@ cal.mark_day(date.day)
 #cal.clear_marks
 cal.display_options(Gtk::Calendar::SHOW_HEADING |
 		    Gtk::Calendar::SHOW_DAY_NAMES |
-		    Gtk::Calendar::SHOW_WEEK_NUMBERS |
-		    Gtk::Calendar::WEEK_START_MONDAY)
+		    Gtk::Calendar::SHOW_WEEK_NUMBERS)
 year, month, day = cal.date
 puts "this is #{month} #{day}, #{year}"
 
-cal.signal_connect('day_selected') do
-  year, month, day = cal.date
-  puts "selected day: #{day}"
-end
-cal.signal_connect('month_changed') do
-  year, month, day = cal.date
-  puts "changed month: #{month}"
-end
+
+
 cal.signal_connect('day_selected_double_click') do
   year, month, day = cal.date
-  puts "dclicked day: #{day}"
+
+  if day < 10
+     day = "0"+day.to_s
+  end
+  if month < 10
+     month = "0"+month.to_s
+  end
+  
+
+  excel = WIN32OLE::connect('Excel.Application')
+  excel.Workbooks("AnalisiPrezzi.xls")
+  #excel.Run("SetData", "#{day}/#{month}/#{year}")
+  excel.Run("SetData", ARGV[0], "#{day}/#{month}/#{year}")
+  
+  
+  
+
+  Gtk.main_quit
 end
-cal.signal_connect('prev_month') do
-  year, month, day = cal.date
-  puts "prev month: #{month}"
-end
-cal.signal_connect('next_month') do
-  year, month, day = cal.date
-  puts "next_month: #{month}"
-end
-cal.signal_connect('prev_year') do
-  year, month, day = cal.date
-  puts "prev_year: #{year}"
-end
-cal.signal_connect('next_year') do
-  year, month, day = cal.date
-  puts "next year: #{year}"
-end
+
 
 Gtk.main
