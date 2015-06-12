@@ -8,7 +8,7 @@ browser = Watir::Browser.new
 
 browser.goto 'http://www.corriere.it/'
 
-sleep 1
+sleep 3
 
 browser.close
 

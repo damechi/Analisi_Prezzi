@@ -76,6 +76,7 @@ def invia_email(data, flusso, errore)
    email.crea_template
    #puts email.rhtml.result(email.get_binding)
    email.invia
+   puts "Invio Email"
 end
 
 def avvio(options)
