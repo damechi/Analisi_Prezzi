@@ -49,20 +49,55 @@ class Crawel
       @ftp.close
    end
 
+   def esci_dalla_rete
+      require 'watir-webdriver'
+      require 'rautomation'
+      require 'timeout'
+
+      @b = Watir::Browser.new :firefox, :profile => "default"
+
+      begin
+         Timeout.timeout(5) do
+            @b.goto 'https://fastlogon.eni.it/Redirector/redirector.aspx?TARGET2=http://myeni.eni.it'
+         end
+      rescue
+      end
+      i = 0
+      while  i<30
+         begin
+            Timeout.timeout(12) do
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").exists? 
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "en27553"
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :tab
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "200899nnn"
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :tab
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :enter
+            end
+            i=30
+         rescue
+            puts "Sono andato in Timeout"
+         end
+         i += 1
+         sleep 1
+      end
+      sleep 3
+      @b.close
+   end
+
    #Fa il parse dal tipo di flusso, mi crea il nome del file da scaricare
    #Parameters : file => "MGP_Prezzi"   (Tipo di flusso che deve scaricate)
    #Return     : "20141010MGPPrezzi.xml" (nome del file da scaricare)
    def parse_name_file file
       #name_file =  "#{@giorno_flusso}" + "#{file.gsub "MGP_","MGP"}" + ".xml" 
       name_file = case file
-                  when /OffertePubbliche/   then  "#{@giorno}" + "#{file.gsub "MGP_","MGP"}"   + ".zip" 
-                  when /MGP/                then  "#{@giorno}" + "#{file.gsub "MGP_","MGP"}"   + ".xml" 
-                  when /MI1/                then  "#{@giorno}" + "#{file.gsub "MI1_","MI1"}"   + ".xml"
-                  when /MI2/                then  "#{@giorno}" + "#{file.gsub "MI2_","MI2"}"   + ".xml"
-                  when /MI3/                then  "#{@giorno}" + "#{file.gsub "MI3_","MI3"}"   + ".xml" 
-                  when /MI4/                then  "#{@giorno}" + "#{file.gsub "MI4_","MI4"}"   + ".xml" 
-                  when /MI5/                then  "#{@giorno}" + "#{file.gsub "MI5_","MI5"}"   + ".xml" 
-                  end
+      when /OffertePubbliche/   then  "#{@giorno}" + "#{file.gsub "MGP_","MGP"}"   + ".zip" 
+      when /MGP/                then  "#{@giorno}" + "#{file.gsub "MGP_","MGP"}"   + ".xml" 
+      when /MI1/                then  "#{@giorno}" + "#{file.gsub "MI1_","MI1"}"   + ".xml"
+      when /MI2/                then  "#{@giorno}" + "#{file.gsub "MI2_","MI2"}"   + ".xml"
+      when /MI3/                then  "#{@giorno}" + "#{file.gsub "MI3_","MI3"}"   + ".xml" 
+      when /MI4/                then  "#{@giorno}" + "#{file.gsub "MI4_","MI4"}"   + ".xml" 
+      when /MI5/                then  "#{@giorno}" + "#{file.gsub "MI5_","MI5"}"   + ".xml" 
+      end
       name_file
    end
 
@@ -84,7 +119,13 @@ if __FILE__ == $0
    require "Date"
    DATA = Date.today
    ftp = Crawel.new(DATA)
-   ftp.login
+   begin
+      ftp.login
+   rescue
+      ftp.esci_dalla_rete
+      ftp.login
+   end
+
    path_xml_flusso = ftp.download_file("MGP_Prezzi")
 end
 
