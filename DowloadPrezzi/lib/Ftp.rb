@@ -58,7 +58,7 @@ class Crawel
 
       begin
          Timeout.timeout(5) do
-            @b.goto 'https://fastlogon.eni.it/Redirector/redirector.aspx?TARGET2=http://myeni.eni.it'
+            @b.goto 'http://it.wikipedia.org'
          end
       rescue
       end
@@ -80,7 +80,7 @@ class Crawel
          i += 1
          sleep 1
       end
-      sleep 3
+      sleep 20
       @b.close
    end
 
