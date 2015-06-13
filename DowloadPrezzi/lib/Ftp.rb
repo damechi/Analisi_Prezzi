@@ -16,8 +16,14 @@ class Crawel
    #Parameters : nil
    #Return     : nil
    def login
-      @ftp = Net::FTP.new("download.mercatoelettrico.org", user="FRANCESCOGIUNTI", passwd="7T10U12G")
-      @ftp.passive = true
+	  begin
+		  @ftp = Net::FTP.new("download.mercatoelettrico.org", user="FRANCESCOGIUNTI", passwd="7T10U12G")
+		  @ftp.passive = true
+	  rescue
+		  esci_dalla_rete
+		  @ftp = Net::FTP.new("download.mercatoelettrico.org", user="FRANCESCOGIUNTI", passwd="7T10U12G")
+		  @ftp.passive = true
+	  end
    end
 
    #Scarica dal sito FTP il file associato al tipo di flusso
@@ -63,9 +69,9 @@ class Crawel
       rescue
       end
       i = 0
-      while  i<30
+      while  i<10
          begin
-            Timeout.timeout(12) do
+            Timeout.timeout(6) do
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").exists? 
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "en27553"
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :tab
@@ -80,7 +86,7 @@ class Crawel
          i += 1
          sleep 1
       end
-      sleep 20
+      sleep 5
       @b.close
    end
 
@@ -119,13 +125,8 @@ if __FILE__ == $0
    require "Date"
    DATA = Date.today
    ftp = Crawel.new(DATA)
-   begin
-      ftp.login
-   rescue
-      ftp.esci_dalla_rete
-      ftp.login
-   end
-
+   ftp.login
+  
    path_xml_flusso = ftp.download_file("MGP_Prezzi")
 end
 
