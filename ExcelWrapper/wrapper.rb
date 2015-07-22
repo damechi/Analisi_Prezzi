@@ -26,7 +26,6 @@ class Excel < Query
       compila_prezzi(valori)
    end
 
-
    def connetti_db
       (Db.new).connect
    end

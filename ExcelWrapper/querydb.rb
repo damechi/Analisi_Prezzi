@@ -35,7 +35,7 @@ class Query
    attr_accessor :query
    def genera_query
       ore = *("1".."24").map{|x| "Ora"+x }
-      @query      = "SELECT Giorno,Data,Flusso,Zona,#{ore.join(",")} FROM Prezzi WHERE"
+      @query         = "SELECT Giorno,Data,Flusso,Zona,#{ore.join(",")} FROM Prezzi WHERE"
       query_date     = parse_date
       query_giorno   = parse_giorno
       query_mercato  = parse_mercato 
@@ -45,7 +45,6 @@ class Query
       @query = @query + " AND " + "("+query_giorno+")" if query_giorno != nil
       @query = @query + " AND " + "("+query_mercato+")" if query_mercato != nil
       @query = @query + " AND " + "("+query_zona+")" if query_zona != nil
-
       return @query.sub("AND", "")
    end
 
