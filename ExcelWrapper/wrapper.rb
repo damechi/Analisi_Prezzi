@@ -73,18 +73,24 @@ class Excel < Query
    end
 
    def spread_mercati(m1,m2)
+      # in m1 ho tutte le righe del mercato 1
+      # in m2 ho tutte le righe del mercato 2
+      # in l ho il numero di righe
       l =  (m1.length)-1
       arr = []
+      # scorro le righe
       0.upto(l) { |i|
+         # prendo i prezzi della riga i del mercato m1
          m = m1[i][4..-1]
          # n = m2.select { |x|  x[0] == m1[i][0] && x[1] == m1[i][1]}
-         n = m2.select { |x| x[1] == m1[i][1]}
+         # prendo le righe dal mercato m2 che contengono la data in cui mi trovo nel mercato m1
+         n = m2.select { |x| x[1] == m1[i][1] && x[3] ==  m1[i][3]}
          arr[i] = [m1[i][0], m1[i][1],"#{mercati.keys[0]}-#{mercati.keys[1]}", m1[i][3]]
 
          if n.empty?
             arr[i] << Array.new(24, "")
             arr[i].flatten!
-            popup("Per il giorno #{arr[i][1]} non è statto trovato nessun dato per il mercato #{mercati.keys[1]}", "", 64)
+            popup("Per il giorno #{arr[i][1]} non è stato trovato nessun dato per il mercato #{mercati.keys[1]}", "", 64)
          else
             arr[i] << [m,n[0][4..-1]].transpose.map { |x|
                if x[0].nil? || x[1].nil? 

@@ -1,4 +1,4 @@
-require 'net/ftp'
+﻿require 'net/ftp'
 require 'fileutils'
 require 'pathname'
 include FileUtils
@@ -75,7 +75,7 @@ class Crawel
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").exists? 
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "en27553"
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :tab
-               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "200899nnn"
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "200899ddd"
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :tab
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :enter
             end
