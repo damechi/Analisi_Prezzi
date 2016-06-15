@@ -72,10 +72,10 @@ end
 
 def invia_email(data, flusso, errore)
    # Set up template data.
-   email = Email.new(data, flusso, errore)
-   email.crea_template
+   #email = Email.new(data, flusso, errore)
+   #email.crea_template
    #puts email.rhtml.result(email.get_binding)
-   email.invia
+   #email.invia
    puts "Invio Email"
 end
 
@@ -98,7 +98,7 @@ def avvio(options)
             ipex.inserisci_log_in_db(1, "OK" )
          end
       rescue Exception => e
-         if presenza_prezzi == 7
+         if presenza_prezzi == 7 #dopo 5 tentativi invia la mail
             invia_email(data , flusso, e.to_s)
             ipex.inserisci_log_in_db(0, e.to_s )#e.backtrace.inspect
          elsif presenza_prezzi == 0

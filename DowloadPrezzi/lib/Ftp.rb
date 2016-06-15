@@ -21,6 +21,7 @@ class Crawel
 		  @ftp.passive = true
 	  rescue
 		  esci_dalla_rete
+		  sleep 6
 		  @ftp = Net::FTP.new("download.mercatoelettrico.org", user="FRANCESCOGIUNTI", passwd="7T10U12G")
 		  @ftp.passive = true
 	  end
@@ -71,11 +72,11 @@ class Crawel
       i = 0
       while  i<10
          begin
-            Timeout.timeout(6) do
+            Timeout.timeout(8) do
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").exists? 
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "en27553"
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :tab
-               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "200899ddd"
+               RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys "200899sss"
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :tab
                RAutomation::Window.new(:title =>  "Autenticazione richiesta").send_keys :enter
             end
