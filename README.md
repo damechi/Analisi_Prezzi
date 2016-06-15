@@ -36,4 +36,4 @@ Invece per la parte che riguarda l'interfaccia con il DB e l'analisi utilizzo l'
 
 Di seguido un video dimostrativo dell'utilizzo:
 
-[![Analisi Prezzi](https://i3.ytimg.com/vi/VdLypplEPO4/hqdefault.jpg)](https://www.youtube.com/embed/VdLypplEPO4&feature=youtu.be?autoplay=1 "Analisi Prezzi")
+[![Analisi Prezzi](https://i3.ytimg.com/vi/VdLypplEPO4/hqdefault.jpg)](https://www.youtube.com/embed/VdLypplEPO4?autoplay=1 "Analisi Prezzi")
