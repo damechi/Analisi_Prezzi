@@ -20,7 +20,7 @@ La seconda componente del programma serve per interfaciarmi con Excel, in pratic
 
 
 ### Utilizzo
-Lo scariamento dei prezzi è autoamtico attraverso lo scheduler di windows, nel caso in cui si volesse scaricare i prezzi on demand si può utilizzare l'interfaccia da riga di comando:
+Lo scaricamento dei prezzi è automatico attraverso lo scheduler di windows, nel caso in cui si volesse scaricare i prezzi on demand si può utilizzare l'interfaccia da riga di comando:
 ```
 Usage: main.rb -f MGP -s 21/02/2015 -e 23/02/2015
 
